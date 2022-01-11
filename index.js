@@ -1,40 +1,32 @@
-const db = firebase.firestore();
+import {
+  onGetTasks,
+  saveTask,
+  deleteTask,
+  getTask,
+  updateTask,
+  getTasks,
+} from "./firebase.js";
 
 const taskForm = document.getElementById("task-form");
 const tasksContainer = document.getElementById("tasks-container");
 
 let editStatus = false;
-let id = '';
-
-/**
- * Save a New Task in Firestore
- * @param {string} title the title of the Task
- * @param {string} description the description of the Task
- */
-const saveTask = (title, description) =>
-  db.collection("tasks").doc().set({
-    title,
-    description,
-  });
-
-const getTasks = () => db.collection("tasks").get();
-
-const onGetTasks = (callback) => db.collection("tasks").onSnapshot(callback);
-
-const deleteTask = (id) => db.collection("tasks").doc(id).delete();
-
-const getTask = (id) => db.collection("tasks").doc(id).get();
-
-const updateTask = (id, updatedTask) => db.collection('tasks').doc(id).update(updatedTask);
+let id = "";
 
 window.addEventListener("DOMContentLoaded", async (e) => {
+  // const querySnapshot = await getTasks();
+  // querySnapshot.forEach((doc) => {
+  //   console.log(doc.data());
+  // });
+
   onGetTasks((querySnapshot) => {
     tasksContainer.innerHTML = "";
 
     querySnapshot.forEach((doc) => {
       const task = doc.data();
 
-      tasksContainer.innerHTML += `<div class="card card-body mt-2 border-primary">
+      tasksContainer.innerHTML += `
+      <div class="card card-body mt-2 border-primary">
     <h3 class="h5">${task.title}</h3>
     <p>${task.description}</p>
     <div>
@@ -50,10 +42,9 @@ window.addEventListener("DOMContentLoaded", async (e) => {
 
     const btnsDelete = tasksContainer.querySelectorAll(".btn-delete");
     btnsDelete.forEach((btn) =>
-      btn.addEventListener("click", async (e) => {
-        console.log(e.target.dataset.id);
+      btn.addEventListener("click", async ({ target: { dataset } }) => {
         try {
-          await deleteTask(e.target.dataset.id);
+          await deleteTask(dataset.id);
         } catch (error) {
           console.log(error);
         }
@@ -72,7 +63,6 @@ window.addEventListener("DOMContentLoaded", async (e) => {
           editStatus = true;
           id = doc.id;
           taskForm["btn-task-form"].innerText = "Update";
-
         } catch (error) {
           console.log(error);
         }
@@ -94,11 +84,11 @@ taskForm.addEventListener("submit", async (e) => {
       await updateTask(id, {
         title: title.value,
         description: description.value,
-      })
+      });
 
       editStatus = false;
-      id = '';
-      taskForm['btn-task-form'].innerText = 'Save';
+      id = "";
+      taskForm["btn-task-form"].innerText = "Save";
     }
 
     taskForm.reset();
