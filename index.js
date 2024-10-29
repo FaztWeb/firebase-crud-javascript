@@ -9,6 +9,7 @@ import {
 
 const taskForm = document.getElementById("task-form");
 const tasksContainer = document.getElementById("tasks-container");
+const butonCancel = document.getElementById("btn-task-cancel");
 
 let editStatus = false;
 let id = "";
@@ -77,6 +78,10 @@ taskForm.addEventListener("submit", async (e) => {
   const title = taskForm["task-title"];
   const description = taskForm["task-description"];
 
+  if (!title.value || !description.value) {
+    return alert("Please complete the form");
+  }
+
   try {
     if (!editStatus) {
       await saveTask(title.value, description.value);
@@ -96,4 +101,11 @@ taskForm.addEventListener("submit", async (e) => {
   } catch (error) {
     console.log(error);
   }
+});
+
+butonCancel.addEventListener("click", (e) => {
+  taskForm.reset();
+
+  editStatus = false;
+  id = "";
 });
