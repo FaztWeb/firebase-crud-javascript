@@ -48,6 +48,15 @@ window.addEventListener("DOMContentLoaded", async (e) => {
           await deleteTask(dataset.id);
         } catch (error) {
           console.log(error);
+          taskContainer.innerHTML += `<div class="window-notice" id="window-notice">
+            <div class="content">
+            <div class="content-text">Acaba con la edición primero. 
+                <a href="#">Leer más.</a></div>
+            <div class="content-buttons"><a href='javascript:void(0);' id="close-button" 
+                  onclick='document.getElementById(&apos;window-notice&apos;).className = &apos;oculto&apos;'>
+                  Aceptar</a></div>
+            </div>
+            </div>`;
         }
       })
     );
